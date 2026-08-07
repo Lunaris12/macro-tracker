@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Macro Tracker</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <h1>Macro Tracker</h1>
+      <div class="date-control">
+        <button id="prevDay" class="icon-btn" title="Previous day">&#8592;</button>
+        <input type="date" id="dateInput" />
+        <button id="nextDay" class="icon-btn" title="Next day">&#8594;</button>
+        <button id="todayBtn" class="link-btn">Today</button>
+      </div>
+    </header>
+
+    <section class="summary" id="summary">
+      <div class="summary-card" data-key="calories">
+        <div class="summary-label">Calories</div>
+        <div class="summary-value"><span id="caloriesVal">0</span> / <span id="caloriesGoal">0</span></div>
+        <div class="bar"><div class="bar-fill calories" id="caloriesBar"></div></div>
+      </div>
+      <div class="summary-card" data-key="protein">
+        <div class="summary-label">Protein (g)</div>
+        <div class="summary-value"><span id="proteinVal">0</span> / <span id="proteinGoal">0</span></div>
+        <div class="bar"><div class="bar-fill protein" id="proteinBar"></div></div>
+      </div>
+      <div class="summary-card" data-key="carbs">
+        <div class="summary-label">Carbs (g)</div>
+        <div class="summary-value"><span id="carbsVal">0</span> / <span id="carbsGoal">0</span></div>
+        <div class="bar"><div class="bar-fill carbs" id="carbsBar"></div></div>
+      </div>
+      <div class="summary-card" data-key="fat">
+        <div class="summary-label">Fat (g)</div>
+        <div class="summary-value"><span id="fatVal">0</span> / <span id="fatGoal">0</span></div>
+        <div class="bar"><div class="bar-fill fat" id="fatBar"></div></div>
+      </div>
+      <button id="editGoalsBtn" class="link-btn goals-btn">Edit goals</button>
+    </section>
+
+    <section id="goalsForm" class="goals-form hidden">
+      <h3>Daily goals</h3>
+      <div class="goals-grid">
+        <label>Calories <input type="number" id="goalCalories" min="0" /></label>
+        <label>Protein (g) <input type="number" id="goalProtein" min="0" /></label>
+        <label>Carbs (g) <input type="number" id="goalCarbs" min="0" /></label>
+        <label>Fat (g) <input type="number" id="goalFat" min="0" /></label>
+      </div>
+      <div class="form-actions">
+        <button id="saveGoalsBtn" class="primary-btn">Save</button>
+        <button id="cancelGoalsBtn" class="secondary-btn">Cancel</button>
+      </div>
+    </section>
+
+    <main class="main-grid">
+      <section class="panel add-food-panel">
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="search">Search foods</button>
+          <button class="tab-btn" data-tab="myfoods">My foods</button>
+          <button class="tab-btn" data-tab="quickadd">Quick add</button>
+        </div>
+
+        <div class="tab-panel" id="tab-search">
+          <div class="search-row">
+            <input type="text" id="searchInput" placeholder="e.g. chicken breast, banana, cheddar cheese" />
+            <button id="searchBtn" class="primary-btn">Search</button>
+          </div>
+          <p class="hint">Data from USDA FoodData Central. Values shown are per 100g.</p>
+          <div id="searchResults" class="results-list"></div>
+        </div>
+
+        <div class="tab-panel hidden" id="tab-myfoods">
+          <div id="customFoodsList" class="results-list"></div>
+          <details class="new-food-details">
+            <summary>+ Add a new custom food</summary>
+            <div class="custom-food-form">
+              <label>Name <input type="text" id="cfName" /></label>
+              <label>Serving label <input type="text" id="cfServingLabel" placeholder="e.g. 1 cup, 1 bar" /></label>
+              <div class="cf-macro-grid">
+                <label>Calories <input type="number" id="cfCalories" min="0" /></label>
+                <label>Protein (g) <input type="number" id="cfProtein" min="0" step="0.1" /></label>
+                <label>Carbs (g) <input type="number" id="cfCarbs" min="0" step="0.1" /></label>
+                <label>Fat (g) <input type="number" id="cfFat" min="0" step="0.1" /></label>
+              </div>
+              <button id="saveCustomFoodBtn" class="primary-btn">Save food</button>
+            </div>
+          </details>
+        </div>
+
+        <div class="tab-panel hidden" id="tab-quickadd">
+          <label>Description <input type="text" id="qaDescription" placeholder="e.g. leftover pasta" /></label>
+          <div class="cf-macro-grid">
+            <label>Calories <input type="number" id="qaCalories" min="0" /></label>
+            <label>Protein (g) <input type="number" id="qaProtein" min="0" step="0.1" /></label>
+            <label>Carbs (g) <input type="number" id="qaCarbs" min="0" step="0.1" /></label>
+            <label>Fat (g) <input type="number" id="qaFat" min="0" step="0.1" /></label>
+          </div>
+          <label class="checkbox-row"><input type="checkbox" id="qaSave" /> Also save to My Foods</label>
+          <button id="qaLogBtn" class="primary-btn">Log it</button>
+        </div>
+      </section>
+
+      <section class="panel log-panel">
+        <h3>Today's log</h3>
+        <table class="log-table">
+          <thead>
+            <tr><th>Food</th><th>Qty</th><th>Cal</th><th>P</th><th>C</th><th>F</th><th></th></tr>
+          </thead>
+          <tbody id="logTableBody"></tbody>
+        </table>
+        <p id="emptyLogMsg" class="hint hidden">Nothing logged yet for this day.</p>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

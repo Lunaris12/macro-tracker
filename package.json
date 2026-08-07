@@ -1,0 +1,16 @@
+{
+  "name": "macro-tracker",
+  "version": "1.0.0",
+  "description": "Personal calorie and macronutrient tracker with USDA food search",
+  "main": "server.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  }
+}
