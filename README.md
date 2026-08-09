@@ -6,9 +6,8 @@ A personal web app for logging food and tracking daily calories and macros (prot
 
 - Search real foods via the USDA FoodData Central database and log by grams
 - Save your own reusable "custom foods" (e.g. homemade meals) with fixed macros per serving
-- Quick-add one-off entries by typing macros directly
-- Daily log with delete, per-day navigation, and calorie/macro goal progress bars
-- Data is stored locally in a JSON file (`data/store.json`) — nothing leaves your machine except food searches
+- Daily log with delete, day by day navigation, and calorie/macro goal progress bars
+- Data is stored locally in a JSON file (`data/store.json`)
 
 ## Setup
 
@@ -20,7 +19,7 @@ npm install
 cp .env.example .env
 ```
 
-Get a free USDA API key at https://fdc.nal.usda.gov/api-key-signup (takes a minute, no cost) and put it in `.env`:
+Get a free USDA API key at https://fdc.nal.usda.gov/api-key-signup and put it in `.env`:
 
 ```
 USDA_API_KEY=your_key_here
@@ -39,5 +38,4 @@ Then open http://localhost:3000
 ## Notes
 
 - All your logged food, custom foods, and goals live in `data/store.json`. Back that file up if you want to keep history.
-- Macro values from search results are per 100g; enter how many grams you ate before adding.
-- To run this permanently on your own machine, you could add it to your startup apps, or run it in the background with a tool like `pm2`.
+- Macro values from search results are per 100g, enter how many grams you ate before adding.
