@@ -1,14 +1,14 @@
 :root {
-  --bg: #f5f6f8;
-  --card-bg: #ffffff;
-  --border: #e2e4e8;
-  --text: #1f2430;
-  --text-muted: #6b7280;
-  --primary: #2f6fed;
-  --calories: #2f6fed;
-  --protein: #e0633a;
-  --carbs: #2fa66a;
-  --fat: #c99a2e;
+  --bg: #0b1220;
+  --card-bg: #141d33;
+  --border: #263252;
+  --text: #e8ecf6;
+  --text-muted: #8b96b4;
+  --primary: #5b8cff;
+  --calories: #5b8cff;
+  --protein: #ea7c56;
+  --carbs: #3fbd82;
+  --fat: #dcae4a;
   --radius: 10px;
 }
 
@@ -104,7 +104,7 @@ body {
 
 .bar {
   height: 6px;
-  background: #eef0f3;
+  background: #1e2944;
   border-radius: 4px;
   overflow: hidden;
 }
@@ -349,7 +349,7 @@ body {
 
 .log-table td {
   padding: 8px 4px;
-  border-bottom: 1px solid #f0f1f3;
+  border-bottom: 1px solid #1e2944;
   vertical-align: top;
 }
 
@@ -359,7 +359,7 @@ body {
 .del-btn {
   background: none;
   border: none;
-  color: #c0392b;
+  color: #e0574a;
   cursor: pointer;
   font-size: 14px;
 }
@@ -371,7 +371,7 @@ body {
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  background: #1f2430;
+  background: #2a3860;
   color: #fff;
   padding: 10px 16px;
   border-radius: 8px;
