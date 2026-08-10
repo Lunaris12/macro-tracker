@@ -56,6 +56,22 @@
       </div>
     </section>
 
+    <section class="panel weight-panel">
+      <div class="weight-panel-top">
+        <h3>Weight</h3>
+        <div class="weight-log-row">
+          <input type="number" id="weightInput" step="0.1" min="0" placeholder="Weight" />
+          <select id="weightUnitSelect">
+            <option value="lbs">lbs</option>
+            <option value="kg">kg</option>
+          </select>
+          <button id="logWeightBtn" class="primary-btn">Log for this day</button>
+        </div>
+      </div>
+      <div id="weightTrend" class="hint"></div>
+      <div class="results-list weight-history-list" id="weightHistoryList"></div>
+    </section>
+
     <main class="main-grid">
       <section class="panel add-food-panel">
         <div class="tabs">

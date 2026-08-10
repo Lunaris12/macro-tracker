@@ -201,6 +201,85 @@ body {
   font-size: 14px;
 }
 
+.weight-panel {
+  margin-bottom: 16px;
+}
+
+.weight-panel-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.weight-panel-top h3 {
+  margin: 0;
+}
+
+.weight-log-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.weight-log-row input[type="number"] {
+  width: 100px;
+  padding: 7px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 14px;
+  background: var(--card-bg);
+  color: var(--text);
+}
+
+.weight-log-row select {
+  padding: 7px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 14px;
+  background: var(--card-bg);
+  color: var(--text);
+}
+
+.weight-history-list {
+  max-height: 220px;
+  margin-top: 6px;
+}
+
+.weight-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+}
+
+.weight-entry-date {
+  color: var(--text-muted);
+  min-width: 90px;
+}
+
+.weight-entry-value {
+  font-weight: 500;
+  flex: 1;
+  text-align: left;
+  padding-left: 10px;
+}
+
+.weight-entry-delta {
+  font-size: 12px;
+  min-width: 60px;
+  text-align: right;
+}
+
+.weight-entry-delta.up { color: var(--protein); }
+.weight-entry-delta.down { color: var(--carbs); }
+.weight-entry-delta.flat { color: var(--text-muted); }
+
 .main-grid {
   display: grid;
   grid-template-columns: 1.1fr 1fr;
@@ -401,4 +480,7 @@ body {
   .summary { grid-template-columns: repeat(2, 1fr); }
   .main-grid { grid-template-columns: 1fr; }
   .goals-grid, .cf-macro-grid { grid-template-columns: repeat(2, 1fr); }
+  .weight-panel-top { flex-direction: column; align-items: stretch; }
+  .weight-log-row { flex-wrap: wrap; }
+  .weight-log-row input[type="number"] { flex: 1; }
 }

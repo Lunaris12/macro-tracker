@@ -19,13 +19,19 @@ function loadStore() {
     const initial = {
       logs: [],
       customFoods: [],
+      weightLogs: [],
       goals: { calories: 2000, protein: 150, carbs: 200, fat: 65 },
+      settings: { weightUnit: 'lbs' },
     };
     fs.mkdirSync(path.dirname(DATA_FILE), { recursive: true });
     fs.writeFileSync(DATA_FILE, JSON.stringify(initial, null, 2));
     return initial;
   }
-  return JSON.parse(fs.readFileSync(DATA_FILE, 'utf-8'));
+  const store = JSON.parse(fs.readFileSync(DATA_FILE, 'utf-8'));
+  // backfill fields for stores created before weight tracking existed
+  if (!store.weightLogs) store.weightLogs = [];
+  if (!store.settings) store.settings = { weightUnit: 'lbs' };
+  return store;
 }
 
 function saveStore(store) {
@@ -202,6 +208,56 @@ app.post('/api/log', (req, res) => {
 app.delete('/api/log/:id', (req, res) => {
   const store = loadStore();
   store.logs = store.logs.filter((l) => l.id !== req.params.id);
+  saveStore(store);
+  res.json({ ok: true });
+});
+
+// ---------- body weight ----------
+
+app.get('/api/weight', (req, res) => {
+  const store = loadStore();
+  const weightLogs = [...store.weightLogs].sort((a, b) => a.date.localeCompare(b.date));
+  res.json({ weightLogs, unit: store.settings.weightUnit });
+});
+
+app.post('/api/weight', (req, res) => {
+  const { date, weight, unit } = req.body || {};
+  if (!date || weight === undefined || weight === null || weight === '') {
+    return res.status(400).json({ error: 'date and weight are required' });
+  }
+  const w = round1(Number(weight));
+  if (!Number.isFinite(w) || w <= 0) {
+    return res.status(400).json({ error: 'weight must be a positive number' });
+  }
+  const store = loadStore();
+  const useUnit = unit || store.settings.weightUnit || 'lbs';
+  store.settings.weightUnit = useUnit;
+
+  // one entry per date - logging again for the same day updates it
+  const existing = store.weightLogs.find((l) => l.date === date);
+  if (existing) {
+    existing.weight = w;
+    existing.unit = useUnit;
+    existing.loggedAt = new Date().toISOString();
+    saveStore(store);
+    return res.json(existing);
+  }
+
+  const entry = {
+    id: crypto.randomUUID(),
+    date,
+    weight: w,
+    unit: useUnit,
+    loggedAt: new Date().toISOString(),
+  };
+  store.weightLogs.push(entry);
+  saveStore(store);
+  res.json(entry);
+});
+
+app.delete('/api/weight/:id', (req, res) => {
+  const store = loadStore();
+  store.weightLogs = store.weightLogs.filter((l) => l.id !== req.params.id);
   saveStore(store);
   res.json({ ok: true });
 });

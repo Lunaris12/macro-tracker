@@ -1,6 +1,8 @@
 const state = {
   date: toDateStr(new Date()),
   goals: { calories: 2000, protein: 150, carbs: 200, fat: 65 },
+  weightLogs: [],
+  weightUnit: 'lbs',
 };
 
 const el = (id) => document.getElementById(id);
@@ -47,6 +49,7 @@ async function loadDay() {
   } catch (err) {
     showToast('Failed to load day: ' + err.message);
   }
+  loadWeightData();
 }
 
 function pct(val, goal) {
@@ -164,6 +167,102 @@ el('saveGoalsBtn').addEventListener('click', async () => {
     loadDay();
   } catch (err) {
     showToast('Failed to save goals: ' + err.message);
+  }
+});
+
+// ---------- body weight ----------
+
+async function loadWeightData() {
+  try {
+    const data = await api('/api/weight');
+    state.weightLogs = data.weightLogs;
+    state.weightUnit = data.unit || 'lbs';
+    el('weightUnitSelect').value = state.weightUnit;
+
+    const todaysEntry = state.weightLogs.find((w) => w.date === state.date);
+    el('weightInput').value = todaysEntry ? todaysEntry.weight : '';
+
+    renderWeightHistory(state.weightLogs);
+  } catch (err) {
+    showToast('Failed to load weight: ' + err.message);
+  }
+}
+
+function renderWeightHistory(logs) {
+  const container = el('weightHistoryList');
+  const trend = el('weightTrend');
+  container.innerHTML = '';
+
+  if (!logs.length) {
+    container.innerHTML = '<p class="hint">No weight logged yet.</p>';
+    trend.textContent = '';
+    return;
+  }
+
+  // logs are sorted ascending by date; compute deltas vs previous entry
+  const ascending = logs;
+  const withDeltas = ascending.map((entry, i) => {
+    const prev = i > 0 ? ascending[i - 1] : null;
+    const delta = prev ? round1(entry.weight - prev.weight) : null;
+    return { ...entry, delta };
+  });
+
+  const first = ascending[0];
+  const last = ascending[ascending.length - 1];
+  const totalChange = round1(last.weight - first.weight);
+  if (ascending.length > 1) {
+    const dir = totalChange > 0 ? '+' : '';
+    trend.textContent = `${dir}${totalChange}${last.unit} since ${first.date} (${ascending.length} entries)`;
+  } else {
+    trend.textContent = '';
+  }
+
+  // show most recent first, capped to last 15
+  const recent = [...withDeltas].reverse().slice(0, 15);
+  for (const entry of recent) {
+    const row = document.createElement('div');
+    row.className = 'weight-entry';
+    let deltaHtml = '';
+    if (entry.delta !== null) {
+      const cls = entry.delta > 0 ? 'up' : entry.delta < 0 ? 'down' : 'flat';
+      const sign = entry.delta > 0 ? '+' : '';
+      deltaHtml = `<span class="weight-entry-delta ${cls}">${sign}${entry.delta}</span>`;
+    } else {
+      deltaHtml = `<span class="weight-entry-delta flat">&mdash;</span>`;
+    }
+    row.innerHTML = `
+      <span class="weight-entry-date">${escapeHtml(entry.date)}</span>
+      <span class="weight-entry-value">${entry.weight} ${escapeHtml(entry.unit)}</span>
+      ${deltaHtml}
+      <button class="del-btn weight-del-btn" title="Delete" data-id="${entry.id}">&times;</button>
+    `;
+    container.appendChild(row);
+  }
+
+  container.querySelectorAll('.weight-del-btn').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      try {
+        await api(`/api/weight/${btn.dataset.id}`, { method: 'DELETE' });
+        loadWeightData();
+      } catch (err) {
+        showToast('Failed to delete: ' + err.message);
+      }
+    });
+  });
+}
+
+el('logWeightBtn').addEventListener('click', async () => {
+  const weight = Number(el('weightInput').value);
+  if (!weight || weight <= 0) return showToast('Enter a valid weight');
+  try {
+    await api('/api/weight', {
+      method: 'POST',
+      body: JSON.stringify({ date: state.date, weight, unit: el('weightUnitSelect').value }),
+    });
+    showToast(`Logged ${weight} ${el('weightUnitSelect').value} for ${state.date}`);
+    loadWeightData();
+  } catch (err) {
+    showToast('Failed to log weight: ' + err.message);
   }
 });
 

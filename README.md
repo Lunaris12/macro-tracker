@@ -7,6 +7,7 @@ A personal web app for logging food and tracking daily calories and macros (prot
 - Search real foods via the USDA FoodData Central database and log by grams
 - Save your own reusable "custom foods" (e.g. homemade meals) with fixed macros per serving
 - Daily log with delete, day by day navigation, and calorie/macro goal progress bars
+- Log your body weight per day (lbs or kg), with history and day-over-day trend
 - Data is stored locally in a JSON file (`data/store.json`)
 
 ## Setup
