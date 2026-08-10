@@ -65,6 +65,7 @@ body {
   height: 30px;
   cursor: pointer;
   font-size: 14px;
+  color: #ffffff;
 }
 
 .link-btn {
@@ -162,6 +163,16 @@ body {
   width: 100%;
   background: var(--card-bg);
   color: var(--text);
+}
+
+.goals-grid input::placeholder,
+.cf-macro-grid input::placeholder,
+#searchInput::placeholder,
+#qaDescription::placeholder,
+#cfName::placeholder,
+#cfServingLabel::placeholder {
+  color: #ffffff;
+  opacity: 0.55;
 }
 
 .form-actions {
