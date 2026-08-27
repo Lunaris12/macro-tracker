@@ -885,37 +885,14 @@ async function loadWorkoutsView() {
   try {
     const data = await api('/api/workouts');
     state.workouts = data.workouts;
-    renderWorkoutList();
+    renderStrengthList();
+    renderCardioList();
   } catch (err) {
     showToast('Failed to load workouts: ' + err.message);
   }
 }
 
-function renderWorkoutList() {
-  const container = el('workoutList');
-  const todays = state.workouts.filter((w) => w.date === state.date).sort((a, b) => a.loggedAt.localeCompare(b.loggedAt));
-  container.innerHTML = '';
-  if (!todays.length) {
-    container.innerHTML = '<p class="hint">No workouts logged for this day.</p>';
-    return;
-  }
-  for (const w of todays) {
-    const item = document.createElement('div');
-    item.className = 'result-item';
-    item.innerHTML = `
-      <div class="result-item-top" style="cursor:default;">
-        <div>
-          <div class="result-name">${escapeHtml(w.type)}</div>
-          <div class="result-sub">${w.durationMin ? w.durationMin + ' min' : ''}</div>
-        </div>
-        <div class="result-macros">${w.caloriesBurned} cal burned</div>
-      </div>
-      <div class="result-expand open">
-        <button class="secondary-btn workout-del-btn" data-id="${w.id}">Remove</button>
-      </div>
-    `;
-    container.appendChild(item);
-  }
+function renderWorkoutDelButtons(container, onDeleted) {
   container.querySelectorAll('.workout-del-btn').forEach((btn) => {
     btn.addEventListener('click', async () => {
       try {
@@ -929,22 +906,105 @@ function renderWorkoutList() {
   });
 }
 
-el('logWorkoutBtn').addEventListener('click', async () => {
-  const type = el('workoutType').value.trim();
-  if (!type) return showToast('Enter a workout type');
-  const durationMin = Number(el('workoutDuration').value) || 0;
-  const caloriesBurned = Number(el('workoutCalories').value) || 0;
+function renderStrengthList() {
+  const container = el('strengthList');
+  const todays = state.workouts
+    .filter((w) => w.date === state.date && w.category === 'strength')
+    .sort((a, b) => a.loggedAt.localeCompare(b.loggedAt));
+  container.innerHTML = '';
+  if (!todays.length) {
+    container.innerHTML = '<p class="hint">No strength sets logged for this day.</p>';
+    return;
+  }
+  for (const w of todays) {
+    const item = document.createElement('div');
+    item.className = 'result-item';
+    const details = [];
+    if (w.reps != null && w.reps > 0) details.push(`${w.reps} reps`);
+    if (w.weightLbs != null && w.weightLbs > 0) details.push(`${w.weightLbs} lbs`);
+    item.innerHTML = `
+      <div class="result-item-top" style="cursor:default;">
+        <div>
+          <div class="result-name">${escapeHtml(w.type)}</div>
+          <div class="result-sub">${escapeHtml(details.join(' @ '))}</div>
+        </div>
+        <div class="result-macros">${w.caloriesBurned ? w.caloriesBurned + ' cal burned' : ''}</div>
+      </div>
+      <div class="result-expand open">
+        <button class="secondary-btn workout-del-btn" data-id="${w.id}">Remove</button>
+      </div>
+    `;
+    container.appendChild(item);
+  }
+  renderWorkoutDelButtons(container);
+}
+
+function renderCardioList() {
+  const container = el('cardioList');
+  const todays = state.workouts
+    .filter((w) => w.date === state.date && w.category === 'cardio')
+    .sort((a, b) => a.loggedAt.localeCompare(b.loggedAt));
+  container.innerHTML = '';
+  if (!todays.length) {
+    container.innerHTML = '<p class="hint">No cardio logged for this day.</p>';
+    return;
+  }
+  for (const w of todays) {
+    const item = document.createElement('div');
+    item.className = 'result-item';
+    item.innerHTML = `
+      <div class="result-item-top" style="cursor:default;">
+        <div>
+          <div class="result-name">${escapeHtml(w.type)}</div>
+          <div class="result-sub">${w.durationMin ? w.durationMin + ' min' : ''}</div>
+        </div>
+        <div class="result-macros">${w.caloriesBurned ? w.caloriesBurned + ' cal burned' : ''}</div>
+      </div>
+      <div class="result-expand open">
+        <button class="secondary-btn workout-del-btn" data-id="${w.id}">Remove</button>
+      </div>
+    `;
+    container.appendChild(item);
+  }
+  renderWorkoutDelButtons(container);
+}
+
+el('logStrengthBtn').addEventListener('click', async () => {
+  const type = el('strengthType').value.trim();
+  if (!type) return showToast('Enter an exercise name');
+  const reps = Number(el('strengthReps').value) || 0;
+  const weightLbs = Number(el('strengthWeight').value) || 0;
+  const caloriesBurned = Number(el('strengthCalories').value) || 0;
   try {
     await api('/api/workouts', {
       method: 'POST',
-      body: JSON.stringify({ date: state.date, type, durationMin, caloriesBurned }),
+      body: JSON.stringify({ date: state.date, category: 'strength', type, reps, weightLbs, caloriesBurned }),
     });
-    showToast('Workout logged');
-    ['workoutType', 'workoutDuration', 'workoutCalories'].forEach((id) => (el(id).value = ''));
+    showToast('Set logged');
+    ['strengthType', 'strengthReps', 'strengthWeight', 'strengthCalories'].forEach((id) => (el(id).value = ''));
     await loadWorkoutsView();
     if (!el('view-home').classList.contains('hidden')) loadHome();
   } catch (err) {
-    showToast('Failed to log workout: ' + err.message);
+    showToast('Failed to log set: ' + err.message);
+  }
+});
+
+el('logCardioBtn').addEventListener('click', async () => {
+  const type = el('cardioType').value.trim();
+  if (!type) return showToast('Enter an activity name');
+  const durationMin = Number(el('cardioDuration').value) || 0;
+  const caloriesBurned = Number(el('cardioCalories').value) || 0;
+  try {
+    await api('/api/workouts', {
+      method: 'POST',
+      body: JSON.stringify({ date: state.date, category: 'cardio', type, durationMin, caloriesBurned }),
+    });
+    showToast('Cardio logged');
+    ['cardioType', 'cardioDuration', 'cardioCalories'].forEach((id) => (el(id).value = ''));
+    await loadWorkoutsView();
+    if (!el('view-home').classList.contains('hidden')) loadHome();
+  } catch (err) {
+    showToast('Failed to log cardio: ' + err.message);
   }
 });
 
