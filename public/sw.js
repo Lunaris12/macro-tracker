@@ -1,4 +1,4 @@
-const CACHE_NAME = 'health-app-shell-v1';
+const CACHE_NAME = 'health-app-shell-v2';
 const SHELL_FILES = [
   '/',
   '/index.html',
@@ -37,19 +37,18 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Cache-first for the static app shell so it still loads offline.
+  // Network-first for the static app shell: always prefer the latest file when
+  // online (this app is under active development), only falling back to the
+  // cached copy when there's no network at all. A cache-first strategy here
+  // would silently serve stale app.js/index.html forever once cached, since
+  // the browser only re-checks this worker file itself for changes.
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      return (
-        cached ||
-        fetch(event.request)
-          .then((response) => {
-            const copy = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
-            return response;
-          })
-          .catch(() => cached)
-      );
-    })
+    fetch(event.request)
+      .then((response) => {
+        const copy = response.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+        return response;
+      })
+      .catch(() => caches.match(event.request))
   );
 });
