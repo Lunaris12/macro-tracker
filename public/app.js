@@ -1027,9 +1027,14 @@ async function loadHome() {
 
     renderHomeSummary(rangeData.days);
     renderStreaks(rangeData.days);
-    renderCaloriesChart(rangeData.days);
-    renderStepsChartHome(start, end);
-    renderWeightChartHome();
+
+    const chartsAvailable = typeof Chart !== 'undefined';
+    el('chartsUnavailableMsg').classList.toggle('hidden', chartsAvailable);
+    if (chartsAvailable) {
+      renderCaloriesChart(rangeData.days);
+      renderStepsChartHome(start, end);
+      renderWeightChartHome();
+    }
   } catch (err) {
     showToast('Failed to load home: ' + err.message);
   }
