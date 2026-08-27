@@ -82,6 +82,7 @@ body {
   display: flex;
   gap: 8px;
   margin-bottom: 20px;
+  flex-wrap: wrap;
 }
 
 .nav-btn {
@@ -122,6 +123,8 @@ body {
   border-radius: var(--radius);
   padding: 14px;
 }
+
+.summary-card .hint { margin: 0; }
 
 .summary-label {
   font-size: 12px;
@@ -184,6 +187,10 @@ body {
   max-width: 180px;
 }
 
+.workout-form-grid {
+  grid-template-columns: repeat(3, 1fr);
+}
+
 .goals-grid label, .cf-macro-grid label {
   display: flex;
   flex-direction: column;
@@ -192,7 +199,8 @@ body {
   gap: 4px;
 }
 
-.goals-grid input, .cf-macro-grid input, #searchInput, #qaDescription, #cfName, #cfServingLabel {
+.goals-grid input, .cf-macro-grid input, #searchInput, #qaDescription, #cfName, #cfServingLabel,
+#mealSearchInput, #mealNameInput, #targetWeightInput {
   padding: 7px 8px;
   border: 1px solid var(--border);
   border-radius: 6px;
@@ -207,7 +215,9 @@ body {
 #searchInput::placeholder,
 #qaDescription::placeholder,
 #cfName::placeholder,
-#cfServingLabel::placeholder {
+#cfServingLabel::placeholder,
+#mealSearchInput::placeholder,
+#mealNameInput::placeholder {
   color: #ffffff;
   opacity: 0.55;
 }
@@ -238,10 +248,6 @@ body {
   font-size: 14px;
 }
 
-.weight-panel {
-  margin-bottom: 16px;
-}
-
 .weight-panel-top {
   display: flex;
   align-items: center;
@@ -259,6 +265,7 @@ body {
   display: flex;
   gap: 8px;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .weight-log-row input[type="number"] {
@@ -281,7 +288,7 @@ body {
 }
 
 .weight-history-list {
-  max-height: 220px;
+  max-height: 260px;
   margin-top: 6px;
 }
 
@@ -293,6 +300,7 @@ body {
   border-radius: 8px;
   padding: 8px 12px;
   font-size: 13px;
+  gap: 8px;
 }
 
 .weight-entry-date {
@@ -336,13 +344,24 @@ body {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 16px;
+  margin-bottom: 16px;
 }
+
+.log-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.log-panel-header h3 { margin: 0; }
 
 .tabs {
   display: flex;
   gap: 4px;
   margin-bottom: 14px;
   border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
 }
 
 .tab-btn {
@@ -497,6 +516,17 @@ body {
 .log-food-name { font-weight: 500; }
 .log-food-qty { color: var(--text-muted); font-size: 11px; }
 
+.meal-tag {
+  display: inline-block;
+  font-size: 10px;
+  color: var(--text-muted);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 6px;
+  margin-left: 6px;
+}
+
 .del-btn {
   background: none;
   border: none;
@@ -520,6 +550,107 @@ body {
   z-index: 50;
 }
 
+/* ---------- Home dashboard ---------- */
+
+.streaks-panel h3,
+.chart-panel h3 {
+  margin-top: 0;
+}
+
+.streaks-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.streak-stat {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+}
+
+.streak-num {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.streak-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.chart-panel canvas {
+  max-width: 100%;
+}
+
+/* ---------- Recently logged chips ---------- */
+
+.recent-chips {
+  margin-bottom: 10px;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.chip {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 12px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.chip:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* ---------- Meal builder ---------- */
+
+.meal-builder {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.meal-cart {
+  border-top: 1px dashed var(--border);
+  padding-top: 10px;
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.meal-cart h4 {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.meal-cart-totals {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ---------- Workouts ---------- */
+
+.workout-list {
+  margin-top: 12px;
+}
+
 @media (max-width: 760px) {
   .summary { grid-template-columns: repeat(2, 1fr); }
   .main-grid { grid-template-columns: 1fr; }
@@ -528,4 +659,6 @@ body {
   .weight-log-row { flex-wrap: wrap; }
   .weight-log-row input[type="number"] { flex: 1; }
   .weight-summary { grid-template-columns: 1fr; }
+  .streaks-grid { grid-template-columns: repeat(2, 1fr); }
+  .workout-form-grid { grid-template-columns: repeat(2, 1fr); }
 }
