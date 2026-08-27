@@ -1,13 +1,15 @@
 # Macro Tracker
 
-A personal web app for logging food and tracking daily calories and macros (protein, carbs, fat).
+A personal web app for logging food and tracking daily calories, macros (protein, carbs, fat), body weight, and step count.
 
 ## Features
 
+- Two views, switchable from the top nav: **Macro Tracking** and **Weight & Steps**
 - Search real foods via the USDA FoodData Central database and log by grams
 - Save your own reusable "custom foods" (e.g. homemade meals) with fixed macros per serving
 - Daily log with delete, day by day navigation, and calorie/macro goal progress bars
-- Log your body weight per day (lbs or kg), with history and day-over-day trend
+- Log your body weight per day (lbs or kg) and daily step count, with history and day-over-day trend
+- Step count has its own editable daily goal, just like the macro goals
 - Data is stored locally in a JSON file (`data/store.json`)
 
 ## Setup
