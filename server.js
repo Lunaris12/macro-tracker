@@ -20,7 +20,7 @@ function loadStore() {
       logs: [],
       customFoods: [],
       weightLogs: [],
-      goals: { calories: 2000, protein: 150, carbs: 200, fat: 65 },
+      goals: { calories: 2000, protein: 150, carbs: 200, fat: 65, steps: 10000 },
       settings: { weightUnit: 'lbs' },
     };
     fs.mkdirSync(path.dirname(DATA_FILE), { recursive: true });
@@ -28,9 +28,10 @@ function loadStore() {
     return initial;
   }
   const store = JSON.parse(fs.readFileSync(DATA_FILE, 'utf-8'));
-  // backfill fields for stores created before weight tracking existed
+  // backfill fields for stores created before weight/step tracking existed
   if (!store.weightLogs) store.weightLogs = [];
   if (!store.settings) store.settings = { weightUnit: 'lbs' };
+  if (store.goals && store.goals.steps === undefined) store.goals.steps = 10000;
   return store;
 }
 
@@ -221,23 +222,43 @@ app.get('/api/weight', (req, res) => {
 });
 
 app.post('/api/weight', (req, res) => {
-  const { date, weight, unit } = req.body || {};
-  if (!date || weight === undefined || weight === null || weight === '') {
-    return res.status(400).json({ error: 'date and weight are required' });
+  const { date, weight, unit, steps } = req.body || {};
+  if (!date) return res.status(400).json({ error: 'date is required' });
+
+  const hasWeight = weight !== undefined && weight !== null && weight !== '';
+  const hasSteps = steps !== undefined && steps !== null && steps !== '';
+  if (!hasWeight && !hasSteps) {
+    return res.status(400).json({ error: 'weight or steps is required' });
   }
-  const w = round1(Number(weight));
-  if (!Number.isFinite(w) || w <= 0) {
-    return res.status(400).json({ error: 'weight must be a positive number' });
+
+  let w = null;
+  if (hasWeight) {
+    w = round1(Number(weight));
+    if (!Number.isFinite(w) || w <= 0) {
+      return res.status(400).json({ error: 'weight must be a positive number' });
+    }
   }
+
+  let s = null;
+  if (hasSteps) {
+    s = Math.round(Number(steps));
+    if (!Number.isFinite(s) || s < 0) {
+      return res.status(400).json({ error: 'steps must be a non-negative number' });
+    }
+  }
+
   const store = loadStore();
   const useUnit = unit || store.settings.weightUnit || 'lbs';
-  store.settings.weightUnit = useUnit;
+  if (hasWeight) store.settings.weightUnit = useUnit;
 
-  // one entry per date - logging again for the same day updates it
+  // one entry per date - logging again for the same day updates whichever fields are provided
   const existing = store.weightLogs.find((l) => l.date === date);
   if (existing) {
-    existing.weight = w;
-    existing.unit = useUnit;
+    if (hasWeight) {
+      existing.weight = w;
+      existing.unit = useUnit;
+    }
+    if (hasSteps) existing.steps = s;
     existing.loggedAt = new Date().toISOString();
     saveStore(store);
     return res.json(existing);
@@ -246,8 +267,9 @@ app.post('/api/weight', (req, res) => {
   const entry = {
     id: crypto.randomUUID(),
     date,
-    weight: w,
+    weight: hasWeight ? w : null,
     unit: useUnit,
+    steps: hasSteps ? s : null,
     loggedAt: new Date().toISOString(),
   };
   store.weightLogs.push(entry);
@@ -270,12 +292,13 @@ app.get('/api/goals', (req, res) => {
 
 app.post('/api/goals', (req, res) => {
   const store = loadStore();
-  const { calories, protein, carbs, fat } = req.body || {};
+  const { calories, protein, carbs, fat, steps } = req.body || {};
   store.goals = {
     calories: Number(calories) || store.goals.calories,
     protein: Number(protein) || store.goals.protein,
     carbs: Number(carbs) || store.goals.carbs,
     fat: Number(fat) || store.goals.fat,
+    steps: Number(steps) || store.goals.steps,
   };
   saveStore(store);
   res.json(store.goals);

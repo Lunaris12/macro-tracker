@@ -18,6 +18,12 @@
       </div>
     </header>
 
+    <nav class="main-nav">
+      <button class="nav-btn active" data-view="macro">Macro Tracking</button>
+      <button class="nav-btn" data-view="weight">Weight &amp; Steps</button>
+    </nav>
+
+    <div id="view-macro" class="view">
     <section class="summary" id="summary">
       <div class="summary-card" data-key="calories">
         <div class="summary-label">Calories</div>
@@ -54,22 +60,6 @@
         <button id="saveGoalsBtn" class="primary-btn">Save</button>
         <button id="cancelGoalsBtn" class="secondary-btn">Cancel</button>
       </div>
-    </section>
-
-    <section class="panel weight-panel">
-      <div class="weight-panel-top">
-        <h3>Weight</h3>
-        <div class="weight-log-row">
-          <input type="number" id="weightInput" step="0.1" min="0" placeholder="Weight" />
-          <select id="weightUnitSelect">
-            <option value="lbs">lbs</option>
-            <option value="kg">kg</option>
-          </select>
-          <button id="logWeightBtn" class="primary-btn">Log for this day</button>
-        </div>
-      </div>
-      <div id="weightTrend" class="hint"></div>
-      <div class="results-list weight-history-list" id="weightHistoryList"></div>
     </section>
 
     <main class="main-grid">
@@ -131,6 +121,52 @@
         <p id="emptyLogMsg" class="hint hidden">Nothing logged yet for this day.</p>
       </section>
     </main>
+    </div>
+
+    <div id="view-weight" class="view hidden">
+      <section class="panel weight-panel">
+        <div class="weight-panel-top">
+          <h3>Weight &amp; Steps</h3>
+          <button id="editStepGoalBtn" class="link-btn">Edit step goal</button>
+        </div>
+
+        <div class="summary weight-summary">
+          <div class="summary-card" data-key="weight">
+            <div class="summary-label">Weight (this day)</div>
+            <div class="summary-value"><span id="weightVal">&mdash;</span> <span id="weightValUnit"></span></div>
+          </div>
+          <div class="summary-card" data-key="steps">
+            <div class="summary-label">Steps</div>
+            <div class="summary-value"><span id="stepsVal">0</span> / <span id="stepsGoal">0</span></div>
+            <div class="bar"><div class="bar-fill steps" id="stepsBar"></div></div>
+          </div>
+        </div>
+
+        <section id="stepGoalForm" class="goals-form hidden">
+          <h3>Daily step goal</h3>
+          <div class="goals-grid step-goal-grid">
+            <label>Steps <input type="number" id="goalSteps" min="0" step="500" /></label>
+          </div>
+          <div class="form-actions">
+            <button id="saveStepGoalBtn" class="primary-btn">Save</button>
+            <button id="cancelStepGoalBtn" class="secondary-btn">Cancel</button>
+          </div>
+        </section>
+
+        <div class="weight-log-row">
+          <input type="number" id="weightInput" step="0.1" min="0" placeholder="Weight" />
+          <select id="weightUnitSelect">
+            <option value="lbs">lbs</option>
+            <option value="kg">kg</option>
+          </select>
+          <input type="number" id="stepsInput" min="0" step="1" placeholder="Steps" />
+          <button id="logWeightBtn" class="primary-btn">Log for this day</button>
+        </div>
+
+        <div id="weightTrend" class="hint"></div>
+        <div class="results-list weight-history-list" id="weightHistoryList"></div>
+      </section>
+    </div>
   </div>
 
   <div id="toast" class="toast hidden"></div>
