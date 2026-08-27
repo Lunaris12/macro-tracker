@@ -9,7 +9,7 @@
 <link rel="icon" href="icons/icon-192.png" />
 <link rel="apple-touch-icon" href="icons/icon-192.png" />
 <link rel="stylesheet" href="style.css" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.1/chart.umd.min.js"></script>
 </head>
 <body>
   <div class="app">
@@ -59,6 +59,8 @@
         <h3>This week</h3>
         <div class="streaks-grid" id="streaksGrid"></div>
       </section>
+
+      <p class="hint hidden" id="chartsUnavailableMsg">Charts couldn't load — the Chart.js library failed to load from its CDN (check your internet connection).</p>
 
       <section class="panel chart-panel">
         <h3>Weight trend</h3>
