@@ -3,13 +3,18 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Macro Tracker</title>
+<title>Personal Health Webapp</title>
+<meta name="theme-color" content="#0b1220" />
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="icons/icon-192.png" />
+<link rel="apple-touch-icon" href="icons/icon-192.png" />
 <link rel="stylesheet" href="style.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 </head>
 <body>
   <div class="app">
     <header class="app-header">
-      <h1>Macro Tracker</h1>
+      <h1>Personal Health Webapp</h1>
       <div class="date-control">
         <button id="prevDay" class="icon-btn" title="Previous day">&#8592;</button>
         <input type="date" id="dateInput" />
@@ -19,123 +24,245 @@
     </header>
 
     <nav class="main-nav">
-      <button class="nav-btn active" data-view="macro">Macro Tracking</button>
-      <button class="nav-btn" data-view="weight">Weight &amp; Steps</button>
+      <button class="nav-btn active" data-view="home">Home</button>
+      <button class="nav-btn" data-view="macro">Macro Tracking</button>
+      <button class="nav-btn" data-view="body">Physical Attributes</button>
+      <button class="nav-btn" data-view="workouts">Workouts</button>
     </nav>
 
-    <div id="view-macro" class="view">
-    <section class="summary" id="summary">
-      <div class="summary-card" data-key="calories">
-        <div class="summary-label">Calories</div>
-        <div class="summary-value"><span id="caloriesVal">0</span> / <span id="caloriesGoal">0</span></div>
-        <div class="bar"><div class="bar-fill calories" id="caloriesBar"></div></div>
-      </div>
-      <div class="summary-card" data-key="protein">
-        <div class="summary-label">Protein (g)</div>
-        <div class="summary-value"><span id="proteinVal">0</span> / <span id="proteinGoal">0</span></div>
-        <div class="bar"><div class="bar-fill protein" id="proteinBar"></div></div>
-      </div>
-      <div class="summary-card" data-key="carbs">
-        <div class="summary-label">Carbs (g)</div>
-        <div class="summary-value"><span id="carbsVal">0</span> / <span id="carbsGoal">0</span></div>
-        <div class="bar"><div class="bar-fill carbs" id="carbsBar"></div></div>
-      </div>
-      <div class="summary-card" data-key="fat">
-        <div class="summary-label">Fat (g)</div>
-        <div class="summary-value"><span id="fatVal">0</span> / <span id="fatGoal">0</span></div>
-        <div class="bar"><div class="bar-fill fat" id="fatBar"></div></div>
-      </div>
-      <button id="editGoalsBtn" class="link-btn goals-btn">Edit goals</button>
-    </section>
-
-    <section id="goalsForm" class="goals-form hidden">
-      <h3>Daily goals</h3>
-      <div class="goals-grid">
-        <label>Calories <input type="number" id="goalCalories" min="0" /></label>
-        <label>Protein (g) <input type="number" id="goalProtein" min="0" /></label>
-        <label>Carbs (g) <input type="number" id="goalCarbs" min="0" /></label>
-        <label>Fat (g) <input type="number" id="goalFat" min="0" /></label>
-      </div>
-      <div class="form-actions">
-        <button id="saveGoalsBtn" class="primary-btn">Save</button>
-        <button id="cancelGoalsBtn" class="secondary-btn">Cancel</button>
-      </div>
-    </section>
-
-    <main class="main-grid">
-      <section class="panel add-food-panel">
-        <div class="tabs">
-          <button class="tab-btn active" data-tab="search">Search foods</button>
-          <button class="tab-btn" data-tab="myfoods">My foods</button>
-          <button class="tab-btn" data-tab="quickadd">Quick add</button>
+    <!-- ================= HOME ================= -->
+    <div id="view-home" class="view">
+      <section class="summary" id="homeSummary">
+        <div class="summary-card" data-key="calories">
+          <div class="summary-label">Calories</div>
+          <div class="summary-value"><span id="homeCaloriesVal">0</span> / <span id="homeCaloriesGoal">0</span></div>
+          <div class="bar"><div class="bar-fill calories" id="homeCaloriesBar"></div></div>
         </div>
-
-        <div class="tab-panel" id="tab-search">
-          <div class="search-row">
-            <input type="text" id="searchInput" placeholder="e.g. chicken breast, banana, cheddar cheese" />
-            <button id="searchBtn" class="primary-btn">Search</button>
-          </div>
-          <p class="hint">Data from USDA FoodData Central. Values shown are per 100g.</p>
-          <div id="searchResults" class="results-list"></div>
+        <div class="summary-card" data-key="net">
+          <div class="summary-label">Net Calories</div>
+          <div class="summary-value"><span id="netCaloriesVal">0</span></div>
+          <div class="hint" id="netCaloriesHint"></div>
         </div>
-
-        <div class="tab-panel hidden" id="tab-myfoods">
-          <div id="customFoodsList" class="results-list"></div>
-          <details class="new-food-details">
-            <summary>+ Add a new custom food</summary>
-            <div class="custom-food-form">
-              <label>Name <input type="text" id="cfName" /></label>
-              <label>Serving label <input type="text" id="cfServingLabel" placeholder="e.g. 1 cup, 1 bar" /></label>
-              <div class="cf-macro-grid">
-                <label>Calories <input type="number" id="cfCalories" min="0" /></label>
-                <label>Protein (g) <input type="number" id="cfProtein" min="0" step="0.1" /></label>
-                <label>Carbs (g) <input type="number" id="cfCarbs" min="0" step="0.1" /></label>
-                <label>Fat (g) <input type="number" id="cfFat" min="0" step="0.1" /></label>
-              </div>
-              <button id="saveCustomFoodBtn" class="primary-btn">Save food</button>
-            </div>
-          </details>
+        <div class="summary-card" data-key="weight">
+          <div class="summary-label">Weight</div>
+          <div class="summary-value"><span id="homeWeightVal">&mdash;</span></div>
+          <div class="hint" id="homeWeightHint"></div>
         </div>
-
-        <div class="tab-panel hidden" id="tab-quickadd">
-          <label>Description <input type="text" id="qaDescription" placeholder="e.g. leftover pasta" /></label>
-          <div class="cf-macro-grid">
-            <label>Calories <input type="number" id="qaCalories" min="0" /></label>
-            <label>Protein (g) <input type="number" id="qaProtein" min="0" step="0.1" /></label>
-            <label>Carbs (g) <input type="number" id="qaCarbs" min="0" step="0.1" /></label>
-            <label>Fat (g) <input type="number" id="qaFat" min="0" step="0.1" /></label>
-          </div>
-          <label class="checkbox-row"><input type="checkbox" id="qaSave" /> Also save to My Foods</label>
-          <button id="qaLogBtn" class="primary-btn">Log it</button>
+        <div class="summary-card" data-key="steps">
+          <div class="summary-label">Steps</div>
+          <div class="summary-value"><span id="homeStepsVal">0</span> / <span id="homeStepsGoal">0</span></div>
+          <div class="bar"><div class="bar-fill steps" id="homeStepsBar"></div></div>
         </div>
       </section>
 
-      <section class="panel log-panel">
-        <h3>Today's log</h3>
-        <table class="log-table">
-          <thead>
-            <tr><th>Food</th><th>Qty</th><th>Cal</th><th>P</th><th>C</th><th>F</th><th></th></tr>
-          </thead>
-          <tbody id="logTableBody"></tbody>
-        </table>
-        <p id="emptyLogMsg" class="hint hidden">Nothing logged yet for this day.</p>
+      <section class="panel streaks-panel">
+        <h3>This week</h3>
+        <div class="streaks-grid" id="streaksGrid"></div>
       </section>
-    </main>
+
+      <section class="panel chart-panel">
+        <h3>Weight trend</h3>
+        <canvas id="weightChart" height="90"></canvas>
+        <p class="hint" id="weightChartEmpty">No weigh-ins logged yet.</p>
+      </section>
+
+      <section class="panel chart-panel">
+        <h3>Calories (last 14 days)</h3>
+        <canvas id="caloriesChart" height="90"></canvas>
+      </section>
+
+      <section class="panel chart-panel">
+        <h3>Steps (last 14 days)</h3>
+        <canvas id="stepsChart" height="90"></canvas>
+      </section>
+
+      <section class="panel">
+        <h3>Backup</h3>
+        <p class="hint">Download everything you've logged as a JSON file.</p>
+        <button id="exportBtn" class="secondary-btn">Export data</button>
+      </section>
     </div>
 
-    <div id="view-weight" class="view hidden">
-      <section class="panel weight-panel">
+    <!-- ================= MACRO TRACKING ================= -->
+    <div id="view-macro" class="view hidden">
+      <section class="summary" id="summary">
+        <div class="summary-card" data-key="calories">
+          <div class="summary-label">Calories</div>
+          <div class="summary-value"><span id="caloriesVal">0</span> / <span id="caloriesGoal">0</span></div>
+          <div class="bar"><div class="bar-fill calories" id="caloriesBar"></div></div>
+        </div>
+        <div class="summary-card" data-key="protein">
+          <div class="summary-label">Protein (g)</div>
+          <div class="summary-value"><span id="proteinVal">0</span> / <span id="proteinGoal">0</span></div>
+          <div class="bar"><div class="bar-fill protein" id="proteinBar"></div></div>
+        </div>
+        <div class="summary-card" data-key="carbs">
+          <div class="summary-label">Carbs (g)</div>
+          <div class="summary-value"><span id="carbsVal">0</span> / <span id="carbsGoal">0</span></div>
+          <div class="bar"><div class="bar-fill carbs" id="carbsBar"></div></div>
+        </div>
+        <div class="summary-card" data-key="fat">
+          <div class="summary-label">Fat (g)</div>
+          <div class="summary-value"><span id="fatVal">0</span> / <span id="fatGoal">0</span></div>
+          <div class="bar"><div class="bar-fill fat" id="fatBar"></div></div>
+        </div>
+        <button id="editGoalsBtn" class="link-btn goals-btn">Edit goals</button>
+      </section>
+
+      <section id="goalsForm" class="goals-form hidden">
+        <h3>Daily goals</h3>
+        <div class="goals-grid">
+          <label>Calories <input type="number" id="goalCalories" min="0" /></label>
+          <label>Protein (g) <input type="number" id="goalProtein" min="0" /></label>
+          <label>Carbs (g) <input type="number" id="goalCarbs" min="0" /></label>
+          <label>Fat (g) <input type="number" id="goalFat" min="0" /></label>
+        </div>
+        <div class="form-actions">
+          <button id="saveGoalsBtn" class="primary-btn">Save</button>
+          <button id="cancelGoalsBtn" class="secondary-btn">Cancel</button>
+        </div>
+      </section>
+
+      <main class="main-grid">
+        <section class="panel add-food-panel">
+          <div class="tabs">
+            <button class="tab-btn active" data-tab="search">Search foods</button>
+            <button class="tab-btn" data-tab="myfoods">My foods</button>
+            <button class="tab-btn" data-tab="meals">Meals</button>
+            <button class="tab-btn" data-tab="quickadd">Quick add</button>
+          </div>
+
+          <div class="tab-panel" id="tab-search">
+            <div id="recentList" class="recent-chips"></div>
+            <div class="search-row">
+              <input type="text" id="searchInput" placeholder="e.g. chicken breast, banana, cheddar cheese" />
+              <button id="searchBtn" class="primary-btn">Search</button>
+            </div>
+            <p class="hint">Data from USDA FoodData Central. Values shown are per 100g.</p>
+            <div id="searchResults" class="results-list"></div>
+          </div>
+
+          <div class="tab-panel hidden" id="tab-myfoods">
+            <div id="customFoodsList" class="results-list"></div>
+            <details class="new-food-details">
+              <summary>+ Add a new custom food</summary>
+              <div class="custom-food-form">
+                <label>Name <input type="text" id="cfName" /></label>
+                <label>Serving label <input type="text" id="cfServingLabel" placeholder="e.g. 1 cup, 1 bar" /></label>
+                <div class="cf-macro-grid">
+                  <label>Calories <input type="number" id="cfCalories" min="0" /></label>
+                  <label>Protein (g) <input type="number" id="cfProtein" min="0" step="0.1" /></label>
+                  <label>Carbs (g) <input type="number" id="cfCarbs" min="0" step="0.1" /></label>
+                  <label>Fat (g) <input type="number" id="cfFat" min="0" step="0.1" /></label>
+                </div>
+                <button id="saveCustomFoodBtn" class="primary-btn">Save food</button>
+              </div>
+            </details>
+          </div>
+
+          <div class="tab-panel hidden" id="tab-meals">
+            <div id="mealsList" class="results-list"></div>
+            <details class="new-food-details">
+              <summary>+ Build a new meal</summary>
+              <div class="meal-builder">
+                <div class="search-row">
+                  <input type="text" id="mealSearchInput" placeholder="Search a food to add to this meal" />
+                  <button id="mealSearchBtn" class="primary-btn">Search</button>
+                </div>
+                <div id="mealSearchResults" class="results-list"></div>
+                <div class="meal-cart">
+                  <h4>Meal items</h4>
+                  <div id="mealCartList"></div>
+                  <div class="meal-cart-totals" id="mealCartTotals"></div>
+                  <label>Meal name <input type="text" id="mealNameInput" placeholder="e.g. Breakfast" /></label>
+                  <button id="saveMealBtn" class="primary-btn">Save meal</button>
+                </div>
+              </div>
+            </details>
+          </div>
+
+          <div class="tab-panel hidden" id="tab-quickadd">
+            <label>Description <input type="text" id="qaDescription" placeholder="e.g. leftover pasta" /></label>
+            <div class="cf-macro-grid">
+              <label>Calories <input type="number" id="qaCalories" min="0" /></label>
+              <label>Protein (g) <input type="number" id="qaProtein" min="0" step="0.1" /></label>
+              <label>Carbs (g) <input type="number" id="qaCarbs" min="0" step="0.1" /></label>
+              <label>Fat (g) <input type="number" id="qaFat" min="0" step="0.1" /></label>
+            </div>
+            <label class="checkbox-row"><input type="checkbox" id="qaSave" /> Also save to My Foods</label>
+            <button id="qaLogBtn" class="primary-btn">Log it</button>
+          </div>
+        </section>
+
+        <section class="panel log-panel">
+          <div class="log-panel-header">
+            <h3>Today's log</h3>
+            <button id="copyYesterdayBtn" class="link-btn">Copy previous day</button>
+          </div>
+          <table class="log-table">
+            <thead>
+              <tr><th>Food</th><th>Qty</th><th>Cal</th><th>P</th><th>C</th><th>F</th><th></th></tr>
+            </thead>
+            <tbody id="logTableBody"></tbody>
+          </table>
+          <p id="emptyLogMsg" class="hint hidden">Nothing logged yet for this day.</p>
+        </section>
+      </main>
+    </div>
+
+    <!-- ================= PHYSICAL ATTRIBUTES ================= -->
+    <div id="view-body" class="view hidden">
+      <section class="panel">
         <div class="weight-panel-top">
-          <h3>Weight &amp; Steps</h3>
+          <h3>Physical Attributes</h3>
+        </div>
+
+        <div class="summary weight-summary">
+          <div class="summary-card">
+            <div class="summary-label">Weight</div>
+            <div class="summary-value"><span id="bodyWeightVal">&mdash;</span> <span id="bodyWeightUnit"></span></div>
+            <div class="hint" id="bodyWeightTargetHint"></div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">Body Fat %</div>
+            <div class="summary-value"><span id="bodyBfVal">&mdash;</span></div>
+          </div>
+        </div>
+
+        <details class="new-food-details">
+          <summary>Set target weight</summary>
+          <div class="custom-food-form">
+            <label>Target weight <input type="number" id="targetWeightInput" step="0.1" min="0" /></label>
+            <button id="saveTargetWeightBtn" class="primary-btn">Save</button>
+          </div>
+        </details>
+
+        <div class="weight-log-row">
+          <input type="number" id="bodyWeightInput" step="0.1" min="0" placeholder="Weight" />
+          <select id="bodyWeightUnitSelect">
+            <option value="lbs">lbs</option>
+            <option value="kg">kg</option>
+          </select>
+          <input type="number" id="bodyFatInput" step="0.1" min="0" max="100" placeholder="Body fat %" />
+          <input type="number" id="waistInput" step="0.1" min="0" placeholder="Waist" />
+          <button id="logBodyBtn" class="primary-btn">Log for this day</button>
+        </div>
+
+        <div id="bodyTrend" class="hint"></div>
+        <div class="results-list weight-history-list" id="bodyHistoryList"></div>
+      </section>
+    </div>
+
+    <!-- ================= WORKOUTS ================= -->
+    <div id="view-workouts" class="view hidden">
+      <section class="panel">
+        <div class="weight-panel-top">
+          <h3>Steps</h3>
           <button id="editStepGoalBtn" class="link-btn">Edit step goal</button>
         </div>
 
         <div class="summary weight-summary">
-          <div class="summary-card" data-key="weight">
-            <div class="summary-label">Weight (this day)</div>
-            <div class="summary-value"><span id="weightVal">&mdash;</span> <span id="weightValUnit"></span></div>
-          </div>
-          <div class="summary-card" data-key="steps">
+          <div class="summary-card">
             <div class="summary-label">Steps</div>
             <div class="summary-value"><span id="stepsVal">0</span> / <span id="stepsGoal">0</span></div>
             <div class="bar"><div class="bar-fill steps" id="stepsBar"></div></div>
@@ -154,17 +281,20 @@
         </section>
 
         <div class="weight-log-row">
-          <input type="number" id="weightInput" step="0.1" min="0" placeholder="Weight" />
-          <select id="weightUnitSelect">
-            <option value="lbs">lbs</option>
-            <option value="kg">kg</option>
-          </select>
           <input type="number" id="stepsInput" min="0" step="1" placeholder="Steps" />
-          <button id="logWeightBtn" class="primary-btn">Log for this day</button>
+          <button id="logStepsBtn" class="primary-btn">Log for this day</button>
         </div>
+      </section>
 
-        <div id="weightTrend" class="hint"></div>
-        <div class="results-list weight-history-list" id="weightHistoryList"></div>
+      <section class="panel">
+        <h3>Exercise</h3>
+        <div class="cf-macro-grid workout-form-grid">
+          <label>Type <input type="text" id="workoutType" placeholder="e.g. Running" /></label>
+          <label>Duration (min) <input type="number" id="workoutDuration" min="0" /></label>
+          <label>Calories burned <input type="number" id="workoutCalories" min="0" /></label>
+        </div>
+        <button id="logWorkoutBtn" class="primary-btn">Log workout</button>
+        <div id="workoutList" class="results-list workout-list"></div>
       </section>
     </div>
   </div>

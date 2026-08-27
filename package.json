@@ -1,7 +1,7 @@
 {
-  "name": "macro-tracker",
-  "version": "1.0.0",
-  "description": "Personal calorie and macronutrient tracker with USDA food search",
+  "name": "personal-health-webapp",
+  "version": "2.0.0",
+  "description": "Personal health tracker: calories/macros, physical attributes (weight, body fat, waist), steps, and workouts, with USDA food search and trend dashboards",
   "main": "server.js",
   "engines": {
     "node": ">=18"
