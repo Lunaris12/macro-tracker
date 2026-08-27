@@ -287,14 +287,26 @@
       </section>
 
       <section class="panel">
-        <h3>Exercise</h3>
-        <div class="cf-macro-grid workout-form-grid">
-          <label>Type <input type="text" id="workoutType" placeholder="e.g. Running" /></label>
-          <label>Duration (min) <input type="number" id="workoutDuration" min="0" /></label>
-          <label>Calories burned <input type="number" id="workoutCalories" min="0" /></label>
+        <h3>Strength</h3>
+        <div class="cf-macro-grid">
+          <label>Exercise <input type="text" id="strengthType" placeholder="e.g. Bench Press" /></label>
+          <label>Reps <input type="number" id="strengthReps" min="0" /></label>
+          <label>Weight (lbs) <input type="number" id="strengthWeight" min="0" step="0.5" /></label>
+          <label>Calories burned <input type="number" id="strengthCalories" min="0" /></label>
         </div>
-        <button id="logWorkoutBtn" class="primary-btn">Log workout</button>
-        <div id="workoutList" class="results-list workout-list"></div>
+        <button id="logStrengthBtn" class="primary-btn">Log set</button>
+        <div id="strengthList" class="results-list workout-list"></div>
+      </section>
+
+      <section class="panel">
+        <h3>Cardio</h3>
+        <div class="cf-macro-grid workout-form-grid">
+          <label>Activity <input type="text" id="cardioType" placeholder="e.g. Running" /></label>
+          <label>Duration (min) <input type="number" id="cardioDuration" min="0" /></label>
+          <label>Calories burned <input type="number" id="cardioCalories" min="0" /></label>
+        </div>
+        <button id="logCardioBtn" class="primary-btn">Log cardio</button>
+        <div id="cardioList" class="results-list workout-list"></div>
       </section>
     </div>
   </div>

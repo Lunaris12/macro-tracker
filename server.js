@@ -553,14 +553,18 @@ app.get('/api/workouts', (req, res) => {
 });
 
 app.post('/api/workouts', (req, res) => {
-  const { date, type, durationMin, caloriesBurned } = req.body || {};
+  const { date, type, category, reps, weightLbs, durationMin, caloriesBurned } = req.body || {};
   if (!date || !type) return res.status(400).json({ error: 'date and type are required' });
+  const cat = category === 'cardio' ? 'cardio' : 'strength';
   const store = loadStore();
   const entry = {
     id: crypto.randomUUID(),
     date,
+    category: cat,
     type,
-    durationMin: Math.round(Number(durationMin) || 0),
+    reps: cat === 'strength' ? Math.round(Number(reps) || 0) : null,
+    weightLbs: cat === 'strength' ? round1(Number(weightLbs) || 0) : null,
+    durationMin: cat === 'cardio' ? Math.round(Number(durationMin) || 0) : null,
     caloriesBurned: Math.round(Number(caloriesBurned) || 0),
     loggedAt: new Date().toISOString(),
   };
